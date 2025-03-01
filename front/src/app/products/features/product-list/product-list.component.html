@@ -1,0 +1,54 @@
+<h1 class="text-center">Liste des produits</h1>
+
+<p-button label="Créer produit" (onClick)="onCreate()" class="block text-center"/>
+
+<p-dataView #dv [value]="products()">
+  <ng-template pTemplate="list" let-products>
+    @for (product of products; track product) {
+      <p-card class="block mb-2">
+        <div class="flex justify-content-between">
+          <div class="flex-grow-1 flex gap-1">
+            <p-image
+              [src]="product.image"
+              alt="Image"
+              width="250"
+              [preview]="true"/>
+            <div>
+              <span class="font-medium text-secondary text-sm">{{ product.category }}</span>
+              <div class="text-lg font-medium text-900 mt-2 mb-5">{{ product.name }}</div>
+              <p-rating [readonly]="true" [cancel]="false" [ngModel]="product.rating"></p-rating>
+            </div>
+          </div>
+          <div class="flex flex-column align-items-end gap-2">
+            <span class="text-xl font-semibold text-900">{{ product.price | number:'1.2-2' }} MAD</span>
+            <p-tag [value]="product.inventoryStatus"
+                   [severity]="getInventoryStatusColor(product.inventoryStatus)"></p-tag>
+          </div>
+        </div>
+        <ng-template pTemplate="footer">
+          <div class="flex justify-content-between">
+            <div class="flex gap-1 mt-1">
+              <p-button label="Modifier" size="small" severity="secondary" (onClick)="onUpdate(product)"/>
+              <p-button label="Supprimer" size="small" severity="danger" (onClick)="onDelete(product)"/>
+            </div>
+            <p-button icon="pi pi-shopping-cart"
+                      size="small"
+                      label="Ajouter au panier"
+                      (click)="addToBasket(product)"
+                      [disabled]="product.inventoryStatus === 'OUTOFSTOCK'"/>
+          </div>
+        </ng-template>
+      </p-card>
+    }
+  </ng-template>
+</p-dataView>
+
+<p-dialog [(visible)]="isDialogVisible"
+          [style]="{ width: '50vw' }"
+          header="Ajout/Edition produit">
+  <app-product-form
+    [product]="editedProduct()"
+    (save)="onSave($event)"
+    (cancel)="onCancel()"
+  />
+</p-dialog>
