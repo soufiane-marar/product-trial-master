@@ -1,0 +1,46 @@
+<div class="w-6 mx-auto">
+  <p class="text-900 text-2xl font-bold">Contactez nous !</p>
+  <div class="grid flex-column md:flex-row formgrid grid-nogutter mt-6 row-gap-2" [formGroup]="contactForm">
+    @if (responseMsg()) {
+      <div class="field col-12">
+        <p-message styleClass="w-full" severity="success" [text]="responseMsg()"></p-message>
+      </div>
+    }
+    <div class="field col-12">
+      <label for="email" class="block font-bold">Email</label>
+      <span class="p-input-icon-left w-full h-3rem">
+          <i class="pi pi-envelope" style="left: 1.5rem;"></i>
+          <input type="text" id="email" pInputText placeholder="Email" class="w-full h-3rem px-7 text-900 font-semibold"
+                 [ngClass]="{'ng-invalid ng-dirty': isInvalidAndDirty('email')}"
+                 formControlName="email"/>
+      </span>
+      <div
+        *ngIf="contactForm.get('email')?.invalid && (contactForm.get('email')?.dirty || contactForm.get('email')?.touched)"
+        class="mt-1">
+        <small class="text-red-500 block">
+          <span *ngIf="contactForm.get('email')?.errors?.['required']">Le champ email est obligatoire</span>
+          <span *ngIf="contactForm.get('email')?.errors?.['email']">Veuillez saisir une adresse email valide</span>
+        </small>
+      </div>
+    </div>
+
+    <div class="field col-12 flex flex-column">
+      <label for="message" class="block font-bold">Message</label>
+      <textarea id="message" rows="5" pInputTextarea
+                class="w-full p-4 text-900 font-semibold border-round"
+                [ngClass]="{'ng-invalid ng-dirty': isInvalidAndDirty('message')}"
+                formControlName="message"></textarea>
+      <div
+        *ngIf="contactForm.get('message')?.invalid && (contactForm.get('message')?.dirty || contactForm.get('message')?.touched)"
+        class="mt-1">
+        <small class="text-red-500 block">
+          <span *ngIf="contactForm.get('message')?.errors?.['required']">Le champ message est obligatoire</span>
+          <span
+            *ngIf="contactForm.get('message')?.errors?.['maxlength']">Le message ne peut pas dépasser 300 caractères</span>
+        </small>
+      </div>
+      <p-button label="Envoyer" icon="pi pi-send" styleClass="p-button-primary ml-auto mt-3 border-round"
+                [disabled]="contactForm.invalid" [loading]="isLoading()" (onClick)="sendMessage()"/>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,7 @@ import {ProductsService} from "app/products/data-access/products.service";
 import {ProductFormComponent} from "app/products/ui/product-form/product-form.component";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
-import {DataViewModule} from 'primeng/dataview';
+import {DataView, DataViewModule} from 'primeng/dataview';
 import {DialogModule} from 'primeng/dialog';
 import {DecimalPipe} from "@angular/common";
 import {RatingModule} from "primeng/rating";
@@ -12,6 +12,7 @@ import {FormsModule} from "@angular/forms";
 import {ImageModule} from "primeng/image";
 import {TagModule} from "primeng/tag";
 import {CartService} from "../../data-access/cart.service";
+import {InputTextModule} from "primeng/inputtext";
 
 const emptyProduct: Product = {
   id: 0,
@@ -35,7 +36,7 @@ const emptyProduct: Product = {
   templateUrl: "./product-list.component.html",
   styleUrls: ["./product-list.component.scss"],
   standalone: true,
-  imports: [DataViewModule, CardModule, ButtonModule, DialogModule, ProductFormComponent, DecimalPipe, RatingModule, FormsModule, ImageModule, TagModule],
+  imports: [DataViewModule, CardModule, ButtonModule, DialogModule, ProductFormComponent, DecimalPipe, RatingModule, FormsModule, ImageModule, TagModule, InputTextModule],
 })
 export class ProductListComponent implements OnInit {
   private readonly productsService = inject(ProductsService);
@@ -98,5 +99,9 @@ export class ProductListComponent implements OnInit {
 
   addToBasket(product: Product) {
     this.cartService.addToBasket(product);
+  }
+
+  onFilter(dv: DataView, event: any) {
+    dv.filter(event.target['value']);
   }
 }
