@@ -1,0 +1,200 @@
+openapi: 3.0.0
+info:
+  title: My Backend API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /account:
+    post:
+      summary: Create a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                firstname:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Account created
+  /token:
+    post:
+      summary: Login and obtain JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: JWT token returned
+  /products:
+    get:
+      summary: Retrieve all products
+      responses:
+        '200':
+          description: List of products
+    post:
+      summary: Create a new product (Admin only)
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product created
+  /products/bulk:
+    post:
+      summary: Create a new product (Admin only)
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Products created
+  /products/{id}:
+    get:
+      summary: Retrieve product by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product details
+    patch:
+      summary: Update product (Admin only)
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Produit modifié
+    delete:
+      summary: Delete product (Admin only)
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Produit supprimé
+  /cart:
+    get:
+      summary: Get user's cart items
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: List of cart items
+    post:
+      summary: Add product to cart
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: integer
+                quantity:
+                  type: integer
+      responses:
+        '201':
+          description: Produit ajouté
+    delete:
+      summary: Remove product from cart
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: integer
+      responses:
+        '200':
+          description: Produit supprimé
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Product:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        quantity:
+          type: number
+        internalReference:
+          type: string
+        shellId:
+          type: number
+        inventoryStatus:
+          type: string
+          enum:
+            - INSTOCK
+            - LOWSTOCK
+            - OUTOFSTOCK
+        rating:
+          type: number
